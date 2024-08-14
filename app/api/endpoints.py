@@ -101,20 +101,17 @@ async def upload_files(
     sample: UploadFile = File(...),
     email: str = Form(...),
 ):
-    # Define file paths
     conversation_path = f"temp/{generate_unique_filename(conversation.filename)}"
     sample_path = f"temp/{generate_unique_filename(sample.filename)}"
     output_path = f"temp/{generate_unique_filename('output.wav')}"
     transcription_path = f"temp/{generate_unique_filename('transcribe.txt')}"
 
-    # Save files
     with open(conversation_path, "wb") as f:
         f.write(await conversation.read())
 
     with open(sample_path, "wb") as f:
         f.write(await sample.read())
 
-    # Queue the task
     process_and_transcribe.delay(
         conversation_path, 
         sample_path, 

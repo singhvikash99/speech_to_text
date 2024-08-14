@@ -3,9 +3,7 @@ import librosa
 import scipy.io.wavfile as wav
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
-from joblib import Parallel, delayed
 import os
-
 
 class AudioProcessor:
     def __init__(self, n_mfcc=13, distance_threshold=9747):
@@ -101,10 +99,10 @@ class AudioProcessor:
 
         for i, conv_features in enumerate(conversation_segments_features):
             try:
-                distances = Parallel(n_jobs=-1)(
-                    delayed(self.calculate_distance)(conv_features, ref_features)
+                distances = [
+                    self.calculate_distance(conv_features, ref_features)
                     for ref_features in reference_segments_features
-                )
+                ]
                 min_dist = min(distances)
                 if min_dist < self.distance_threshold:
                     if i not in matched_indices:
@@ -123,9 +121,6 @@ class AudioProcessor:
         if extracted_segments:
             try:
                 extracted_audio = np.hstack(extracted_segments)
-                if output_file is None:
-                    print("Output file path is None.")
-                    return None
                 wav.write(output_file, sr_conv, (extracted_audio * 32767).astype(np.int16))
                 return output_file
             except Exception as e:

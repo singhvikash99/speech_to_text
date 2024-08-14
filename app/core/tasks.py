@@ -13,27 +13,47 @@ logger = logging.getLogger(__name__)
 
 @celery.task
 def process_and_transcribe(conversation_path, sample_path, output_path, transcription_path, email):
-    logger.info(f"Task started with paths: {type(conversation_path)}, {type(sample_path)}, {type(output_path)}, {type(transcription_path)}")
     try:
         try:
-            audio_processor = AudioProcessor()
-            output_file_path = audio_processor.extract_person(conversation_path, sample_path, output_path)
-            if output_file_path is None:
-                logger.error("Output file path is None.")
-                return
+            output_file_path = AudioProcessor().extract_person(
+                conversation_path, sample_path, output_path
+            )
         except Exception as e:
             logger.error(f"Error occurred: {str(e)}")
+            os.remove(conversation_path)
+            os.remove(sample_path)
+            raise e
+        
+        try:
+            transcriber = WhisperTranscriber()
+            transcriber.transcribe(output_file_path, transcription_path)
+        except Exception as e:
+            logger.error(f"Error occurred intra: {str(e)}")
+            os.remove(conversation_path)
+            os.remove(sample_path)
+            os.remove(output_file_path)
             raise e
 
-        # Transcribe audio
-        transcriber = WhisperTranscriber()
-        transcriber.transcribe(output_file_path, transcription_path)
-        print(f"Phase 2 done {transcription_path}")
-
-        # Send email with transcription
-        send_email(to_email=email, transcription_path=transcription_path)
-
+        try:
+            print(transcription_path)
+            send_email(to_email=email, transcription_path=transcription_path)
+        except Exception as e:
+            logger.error(f"Error occurred intra: {str(e)}")
+            os.remove(conversation_path)
+            os.remove(sample_path)
+            os.remove(output_file_path)
+            os.remove(transcription_path)
+            raise e
+        
+        os.remove(conversation_path)
+        os.remove(sample_path)
+        os.remove(output_file_path)
+        os.remove(transcription_path)
         
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
+        os.remove(conversation_path)
+        os.remove(sample_path)
+        os.remove(output_file_path)
+        os.remove(transcription_path)
         raise e
