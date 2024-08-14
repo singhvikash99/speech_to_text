@@ -97,6 +97,7 @@ def generate_unique_filename(original_filename: str) -> str:
 
 @router.post("/upload/")
 async def upload_files(
+    request: Request,
     conversation: UploadFile = File(...),
     sample: UploadFile = File(...),
     email: str = Form(...),
@@ -120,8 +121,4 @@ async def upload_files(
         email
     )
 
-    return JSONResponse(
-        content={
-            "message": "Processing started. You will receive an email with the transcription attached once the processing is complete."
-        }
-    )
+    return templates.TemplateResponse("results.html", {"request": request})
