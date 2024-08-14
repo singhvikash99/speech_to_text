@@ -3,7 +3,6 @@ import whisperx
 
 class WhisperTranscriber:
     def __init__(self, model_size="small", device="cpu"):
-        # Ensure model is loaded with float32 computation
         self.model = whisperx.load_model(
             model_size, device=device, compute_type="float32"
         )
