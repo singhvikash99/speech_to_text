@@ -40,7 +40,7 @@ class AudioProcessor:
 
         segment_length_sec = 1
         segment_length_samples = int(segment_length_sec * sr_conv)
-        hop_length_samples = int(segment_length_samples / 4)
+        hop_length_samples = int(segment_length_samples / 2)
 
         try:
             num_ref_segments = (
