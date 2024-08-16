@@ -28,8 +28,4 @@ class WhisperTranscriber:
             for segment in result["segments"]:
                 f.write(segment["text"] + "\n")
 
-<<<<<<< HEAD
-        print(f"Transcription saved to {output_path}")
-=======
         print(f"Transcription saved successfully to {output_path}")
->>>>>>> origin/master
