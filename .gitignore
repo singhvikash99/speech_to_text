@@ -2,6 +2,8 @@
 venv/
 .venv/
 
+/pretrained_models/
+/model/
 # Ignore temp folder
 /temp/
 

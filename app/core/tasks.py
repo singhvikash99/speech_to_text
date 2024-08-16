@@ -1,7 +1,8 @@
 from celery import Celery
 from app.core.celery import app
 from app.utils.result_email import send_email
-from app.core.audio_processor import AudioProcessor
+# from app.core.audio_processor import AudioProcessor #librosa mfcc
+from app.core.audio_isolation import AudioProcessor #speechbrain
 from app.core.transcriber import WhisperTranscriber
 import logging
 import os

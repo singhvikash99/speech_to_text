@@ -12,7 +12,6 @@ load_dotenv()
 def send_email(to_email, transcription_path):
     from_email = os.getenv("EMAIL_USER")
     from_password = os.getenv("EMAIL_PASSWORD") 
-    print(f"Password: {from_password}") 
     subject = "Transcription Result"
     body = "Please find your transcription attached."
 
